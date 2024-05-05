@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "non_empty"
+name = "non_empty_continuous"
 version = "0.1.0"
 dependencies = [
  "smallvec",

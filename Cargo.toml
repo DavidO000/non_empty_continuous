@@ -1,7 +1,11 @@
 [package]
-name = "non_empty"
+name = "non_empty_continuous"
 version = "0.1.0"
 edition = "2021"
+keywords = ["slice", "vector", "smallvec", "collections", "nonempty"]
+repository = "https://github.com/DavidO000/non_empty_continuous"
+description = "Non-empty continuous collections"
+license = "0BSD"
 
 [dependencies]
 smallvec = { version = "1.13.2", optional = true }
