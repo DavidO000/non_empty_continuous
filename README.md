@@ -1,4 +1,4 @@
-# non_empty
+# non_empty_continuous
 
 Crate for non-empty continuous collections.
 
@@ -23,7 +23,6 @@ let non_empty_slice_mut: &mut NonEmptySlice<i32> = &mut non_empty_vec[..];
 let length: std::num::NonZeroUsize = non_empty_slice.len();
 
 let non_empty_vec_from_macro = ne_vec![99, 98, 97];
-let non_empty_vec_from_macro2 = ne_vec![0; std::num::NonZeroUsize::new(100).unwrap()];
 ```
 
 ## Features
@@ -42,6 +41,8 @@ let _: bool = non_empty_small_vec.spilled();
 
 let non_empty_slice: &NonEmptySlice<i32> = &non_empty_small_vec[..=1];
 let non_empty_slice_mut: &mut NonEmptySlice<i32> = &mut non_empty_small_vec[..];
+
+let non_empty_smallvec_from_macro = ne_smallvec![99, 98, 97];
 ```
 
 ### `static_assert_generic`
@@ -53,7 +54,7 @@ let mut non_empty_vec: NonEmptyVec<i32> = NonEmptyVec::from_arr(arr);
 ```
 
 \
-empty arrays give an error
+Empty arrays give an error.
 ```rust
 let arr2 = [];
 let mut non_empty_vec: NonEmptyVec<i32> = NonEmptyVec::from_arr(arr); // !!!
@@ -65,3 +66,5 @@ Smallvec `static_assert_generic` featues also requires `smallvec`'s `const_gener
 let arr3 = [4, 5, 6];
 let mut non_empty_small_vec: NonEmptySmallVec<i32> = NonEmptySmallVec::from_arr(arr3);
 ```
+
+License: 0BSD

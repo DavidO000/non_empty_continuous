@@ -53,7 +53,7 @@ let mut non_empty_vec: NonEmptyVec<i32> = NonEmptyVec::from_arr(arr);
 ```
 
 \
-empty arrays give an error
+Empty arrays give an error.
 ```
 let arr2 = [];
 let mut non_empty_vec: NonEmptyVec<i32> = NonEmptyVec::from_arr(arr); // !!!
