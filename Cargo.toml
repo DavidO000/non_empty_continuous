@@ -1,0 +1,12 @@
+[package]
+name = "non_empty"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+smallvec = { version = "1.13.2", optional = true }
+static_assert_generic = { version = "0.1.0", optional = true }
+
+[features]
+smallvec = ["dep:smallvec"]
+static_assert_generic = ["dep:static_assert_generic"]
