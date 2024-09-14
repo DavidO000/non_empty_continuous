@@ -53,6 +53,15 @@ impl<T> NonEmptySlice<T> {
         }
     }
 
+    /// Creates a NonEmptySlice from an array whose length is not 0.\
+    /// The length of the array is checked at compile time, and as such this method is infalible.
+    /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
+    #[inline]
+    pub fn from_arr<const N: usize>(arr: &[T; N]) -> &NonEmptySlice<T> {
+        const { assert!(N > 0, "Length of array must be non-zero to create NonEmptySlice."); }
+        unsafe { NonEmptySlice::from_slice_unchecked(arr) }
+    }
+
     /// Gets the underlying slice reference behind the `NonEmptySlice`.
     /// This type implements `Deref<Target = [T]>`, consider simply borrowing the value.
     #[inline]
@@ -277,24 +286,6 @@ impl<'a, T> From<&'a mut NonEmptySlice<T>> for &'a mut [T] {
     }
 }
 
-
-
-#[cfg(feature = "static_assert_generic")]
-use static_assert_generic::static_assert;
-
-#[cfg(feature = "static_assert_generic")]
-impl<T> NonEmptySlice<T> {
-    /// Creates a NonEmptySlice from an array whose length is not 0.\
-    /// The length of the array is checked at compile time, and as such this method is infalible.
-    /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
-    #[inline]
-    pub fn from_arr<const N: usize>(arr: &[T; N]) -> &NonEmptySlice<T> {
-        static_assert!((N: usize) N != 0 => "Length of array must be non-zero to create NonEmptySlice.");
-        unsafe { NonEmptySlice::from_slice_unchecked(arr) }
-    }
-}
-
-#[cfg(feature = "static_assert_generic")]
 impl<'a, T: Clone, const N: usize> From<&'a [T; N]> for &'a NonEmptySlice<T> {
     #[inline]
     fn from(value: &'a [T; N]) -> Self {

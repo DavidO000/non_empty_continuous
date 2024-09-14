@@ -95,6 +95,7 @@ impl<A: Array> NonEmptySmallVec<A> {
     /// The length of the array must not be 0.
     #[inline]
     pub unsafe fn from_buf_unchecked(buf: A) -> NonEmptySmallVec<A> {
+        
         NonEmptySmallVec(SmallVec::from_buf(buf))
     }
 
@@ -571,6 +572,41 @@ impl<A: Array> From<NonEmptySmallVec<A>> for SmallVec<A> {
     }
 }
 
+impl<T, const N: usize>  NonEmptySmallVec<[T; N]> {
+    /// Wrapper around `SmallVec::from_buf`.\
+    /// The length of the array is checked at compile time, and as such this method is infalible.
+    /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
+    #[inline]
+    pub fn from_buf(buf: [T; N]) -> NonEmptySmallVec<[T; N]> {
+        const { assert!(N > 0, "Length of array must be non-zero to create NonEmptySmallVec."); }
+        NonEmptySmallVec(SmallVec::from_buf(buf))
+    }
+
+    /// Safe wrapper around `SmallVec::from_buf_and_len`.\
+    /// The length of the array is checked at compile time, and as such this method is infalible.
+    /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
+    #[inline]
+    pub fn from_buf_and_len(buf: [T; N], len: NonZeroUsize) -> NonEmptySmallVec<[T; N]> {
+        const { assert!(N > 0, "Length of array must be non-zero to create NonEmptySmallVec."); }
+        NonEmptySmallVec(SmallVec::from_buf_and_len(buf, len.get()))
+    }
+
+    /// Wrapper around `SmallVec::from_buf_and_len_unchecked`.\
+    /// The length of the array is checked at compile time, and as such this method is infalible.
+    /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
+    #[inline]
+    pub unsafe fn from_buf_and_len_unchecked(buf: core::mem::MaybeUninit<[T; N]>, len: NonZeroUsize) -> NonEmptySmallVec<[T; N]> {
+        const { assert!(N > 0, "Length of array must be non-zero to create NonEmptySmallVec."); }
+        NonEmptySmallVec(SmallVec::from_buf_and_len_unchecked(buf, len.get()))
+    }
+}
+
+impl<T, const N: usize> From<[T; N]> for NonEmptySmallVec<[T; N]> {
+    fn from(buf: [T; N]) -> Self {
+        NonEmptySmallVec(SmallVec::from_buf(buf))
+    }
+}
+
 
 
 
@@ -592,57 +628,5 @@ impl<A: Array<Item = u8>> std::io::Write for NonEmptySmallVec<A> {
     #[inline]
     fn flush(&mut self) -> std::io::Result<()> {
         Ok(())
-    }
-}
-
-
-
-#[cfg(feature = "static_assert_generic")]
-#[allow(unused_imports)]
-use static_assert_generic::static_assert;
-
-#[cfg(all(feature = "dep:smallvec/const_generics", feature = "static_assert_generic"))]
-impl<T, const N: usize>  NonEmptySmallVec<[T; N]> {
-
-    /// Wrapper around `SmallVec::from_buf`.\
-    /// The length of the array is checked at compile time, and as such this method is infalible.
-    /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
-    #[inline]
-    pub fn from_buf(buf: [T; N]) -> NonEmptySmallVec<[T; N]> {
-        static_assert!(N != 0);
-        NonEmptySmallVec(SmallVec::from_buf(buf))
-    }
-
-    /// Safe wrapper around `SmallVec::from_buf_and_len`.\
-    /// The length of the array is checked at compile time, and as such this method is infalible.
-    /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
-    #[inline]
-    pub fn from_buf_and_len(buf: [T; N], len: NonZeroUsize) -> NonEmptySmallVec<[T; N]> {
-        static_assert!(N != 0);
-        NonEmptySmallVec(SmallVec::from_buf_and_len(buf, len))
-    }
-
-    /// Wrapper around `SmallVec::from_buf_and_len_unchecked`.\
-    /// The length of the array is checked at compile time, and as such this method is infalible.
-    /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
-    #[inline]
-    pub unsafe fn from_buf_and_len_unchecked(buf: [T; N], len: NonZeroUsize) -> NonEmptySmallVec<[T; N]> {
-        static_assert!(N != 0);
-        NonEmptySmallVec(SmallVec::from_buf_and_len_unchecked(buf, len))
-    }
-}
-
-#[cfg(all(feature = "dep:smallvec/const_generics", feature = "static_assert_generic"))]
-impl<T, const N: usize> From<[T; N]> for NonEmptySmallVec<[T; N]> {
-    fn from(buf: [T; N]) -> Self {
-        NonEmptySmallVec(SmallVec::from_buf(buf))
-    }
-}
-
-#[cfg(all(feature = "dep:smallvec/const_generics", feature = "static_assert_generic"))]
-impl<T, const N: usize> NonEmptySmallVec<[T; N]> {
-    #[inline]
-    pub fn from_buf<const N: usize>(arr: [T; N]) -> NonEmptySmallVec<[T; N]> {
-        arr.into()
     }
 }

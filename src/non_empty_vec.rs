@@ -612,45 +612,36 @@ impl<T> From<NonEmptyVec<T>> for Vec<T> {
     }
 }
 
-
-
-#[cfg(feature = "static_assert_generic")]
-use static_assert_generic::static_assert;
-
-#[cfg(feature = "static_assert_generic")]
 impl<T: Clone, const N: usize> From<&[T; N]> for NonEmptyVec<T> {
     /// The length of the array is checked at compile time, and as such this method is infalible.
     /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
     #[inline]
     fn from(s: &[T; N]) -> NonEmptyVec<T> {
-        static_assert!((N: usize) N != 0 => "Length of array must be non-zero to create NonEmptyVec.");
+        const { assert!(N > 0, "Length of array must be non-zero to create NonEmptySlice."); }
         NonEmptyVec(s.to_vec())
     }
 }
 
-#[cfg(feature = "static_assert_generic")]
 impl<T: Clone, const N: usize> From<&mut [T; N]> for NonEmptyVec<T> {
     /// The length of the array is checked at compile time, and as such this method is infalible.
     /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
     #[inline]
     fn from(s: &mut [T; N]) -> NonEmptyVec<T> {
-        static_assert!((N: usize) N != 0 => "Length of array must be non-zero to create NonEmptyVec.");
+        const { assert!(N > 0, "Length of array must be non-zero to create NonEmptySlice."); }
         NonEmptyVec(s.to_vec())
     }
 }
 
-#[cfg(feature = "static_assert_generic")]
 impl<T, const N: usize> From<[T; N]> for NonEmptyVec<T> {
     /// The length of the array is checked at compile time, and as such this method is infalible.
     /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
     #[inline]
     fn from(s: [T; N]) -> NonEmptyVec<T> {
-        static_assert!((N: usize) N != 0 => "Length of array must be non-zero to create NonEmptyVec.");
+        const { assert!(N > 0, "Length of array must be non-zero to create NonEmptySlice."); }
         NonEmptyVec(s.into())
     }
 }
 
-#[cfg(feature = "static_assert_generic")]
 impl<T> NonEmptyVec<T> {
     #[inline]
     pub fn from_arr<const N: usize>(arr: [T; N]) -> NonEmptyVec<T> {
@@ -658,7 +649,6 @@ impl<T> NonEmptyVec<T> {
     }
 }
 
-#[cfg(feature = "static_assert_generic")]
 impl<T, const N: usize> TryFrom<NonEmptyVec<T>> for [T; N] {
     type Error = NonEmptyVec<T>;
     
@@ -666,7 +656,7 @@ impl<T, const N: usize> TryFrom<NonEmptyVec<T>> for [T; N] {
     /// If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
     #[inline]
     fn try_from(s: NonEmptyVec<T>) -> Result<[T; N], NonEmptyVec<T>> {
-        static_assert!((N: usize) N != 0 => "Length of array must be non-zero to create NonEmptyVec.");
+        const { assert!(N > 0, "Length of array must be non-zero to create NonEmptySlice."); }
         if s.is_empty() { Err(s) }
         else {
             match s.0.try_into() {
