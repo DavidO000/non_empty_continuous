@@ -24,6 +24,20 @@ let length: std::num::NonZeroUsize = non_empty_slice.len();
 let non_empty_vec_from_macro = ne_vec![99, 98, 97];
 ```
 
+Some operations allow for infalible operations with arrays whose length is checked not to be 0 at compile-time.
+
+```
+let arr = [1, 2, 3];
+let mut non_empty_vec: NonEmptyVec<i32> = NonEmptyVec::from_arr(arr);
+```
+
+\
+If the length of the array is not 0, a compiler error will be given. This requires a full build and does not show up when running `cargo check`.
+```
+let arr2 = [];
+let mut non_empty_vec: NonEmptyVec<i32> = NonEmptyVec::from_arr(arr); // !!!
+```
+
 # Features
 
 ## `smallvec`
@@ -44,23 +58,8 @@ let non_empty_slice_mut: &mut NonEmptySlice<i32> = &mut non_empty_small_vec[..];
 let non_empty_smallvec_from_macro = ne_smallvec![99, 98, 97];
 ```
 
-## `static_assert_generic`
-Allows for infalible operations with arrays whose length is checked not to be 0 at compile-time.
-
-```
-let arr = [1, 2, 3];
-let mut non_empty_vec: NonEmptyVec<i32> = NonEmptyVec::from_arr(arr);
-```
-
 \
-Empty arrays give an error.
-```
-let arr2 = [];
-let mut non_empty_vec: NonEmptyVec<i32> = NonEmptyVec::from_arr(arr); // !!!
-```
-
-\
-Smallvec `static_assert_generic` featues also requires `smallvec`'s `const_generics` feature.
+Smallvec can also has operations where the length of the array can be checked at compile-time.
 ```
 let arr3 = [4, 5, 6];
 let mut non_empty_small_vec: NonEmptySmallVec<i32> = NonEmptySmallVec::from_arr(arr3);
@@ -73,5 +72,5 @@ pub use non_empty_slice::*;
 #[macro_use] mod non_empty_vec;
 pub use non_empty_vec::*;
 
-#[cfg(feature = "smallvec")] #[macro_use]  mod non_empty_smallvec; 
+#[cfg(feature = "smallvec")] #[macro_use] mod non_empty_smallvec; 
 #[cfg(feature = "smallvec")] pub use non_empty_smallvec::*;
